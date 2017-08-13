@@ -35,7 +35,7 @@ class WindowClass(wx.Frame):
         self.SetTitle('SV Launch Tool')
         self.SetSize(200, 56)
         self.SetWindowStyle(style=wx.SYSTEM_MENU | wx.RESIZE_BORDER | wx.CAPTION | wx.CLOSE_BOX)
-        app_icon = wx.Icon('if_Robot_01_385831.png', wx.BITMAP_TYPE_PNG, 16,16)
+        app_icon = wx.Icon('launch.ico', wx.BITMAP_TYPE_ICO, 16,16)
         self.SetIcon(app_icon)
         self.Show()
 
@@ -97,12 +97,6 @@ if __name__ == '__main__':
         # have environment list as dict.
         for entry in env_list:
             env_dict[entry[0]] = entry[1:]
-
-        """# add menu list from the list
-        for entry in env_list:
-            menulable = entry[0]
-            filemenu.add_command(label=menulable, command=lambda lab=menulable: init_sv_login(lab))
-        """
 
     except IOError as err:
         print("OS error: {0}".format(err))
