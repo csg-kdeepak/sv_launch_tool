@@ -5,6 +5,7 @@ import wx
 from read_ini import get_login_data
 from pywinauto import Application, application
 
+APP_ICON = "launch.png"
 
 class WindowClass(wx.Frame):
     """
@@ -35,9 +36,10 @@ class WindowClass(wx.Frame):
         menu_bar.Append(file_menu, '&Select Env')  # add the file_menu on the menu bar
         self.SetMenuBar(menu_bar)  # turn on the menu bar for WindowClass which is inherits Frame class
         self.SetTitle('SV Launch Tool')
-        self.SetSize(200, 56)
+        self.SetSize(200, 80)
         self.SetWindowStyle(style=wx.SYSTEM_MENU | wx.RESIZE_BORDER | wx.CAPTION | wx.CLOSE_BOX)
-        app_icon = wx.Icon('launch.ico', wx.BITMAP_TYPE_ICO, 16, 16)
+        app_icon = wx.EmptyIcon()
+        app_icon.CopyFromBitmap(wx.Bitmap(APP_ICON, wx.BITMAP_TYPE_PNG))
         self.SetIcon(app_icon)
         self.Show()
 
