@@ -3,7 +3,7 @@ Sample application for creating a GUI window
 """
 import wx
 from read_ini import get_login_data
-from pywinauto import Application
+from pywinauto import Application, application
 
 
 class WindowClass(wx.Frame):
@@ -11,10 +11,12 @@ class WindowClass(wx.Frame):
     This is the class which will be used for creating the frames
     """
     menu_names = {}  # Member variable
+    sv_app = ''
 
-    def __init__(self, menu_name, *args, **kwargs):
+    def __init__(self, menu_name, sv, *args, **kwargs):
         super(WindowClass, self).__init__(*args, **kwargs)
         self.menu_names = menu_name
+        self.sv_app = sv
         self.basic_gui()
 
     def basic_gui(self):
@@ -35,15 +37,12 @@ class WindowClass(wx.Frame):
         self.SetTitle('SV Launch Tool')
         self.SetSize(200, 56)
         self.SetWindowStyle(style=wx.SYSTEM_MENU | wx.RESIZE_BORDER | wx.CAPTION | wx.CLOSE_BOX)
-        app_icon = wx.Icon('launch.ico', wx.BITMAP_TYPE_ICO, 16,16)
+        app_icon = wx.Icon('launch.ico', wx.BITMAP_TYPE_ICO, 16, 16)
         self.SetIcon(app_icon)
         self.Show()
 
     def quit(self, e):
         self.Close()
-
-    def launch_gui(self, event):
-        print("value of the event is {}", event.GetId())
 
     def init_sv_login(self, event):
         """
@@ -52,7 +51,12 @@ class WindowClass(wx.Frame):
         """
         # Launch the application
         evt_id = event.GetId() - 1
-        app = Application(backend='uia').start(sv_app)
+
+        try:
+            app = Application(backend='uia').start(self.sv_app)
+
+        except application.AppStartError as err:
+            show_msg_box("Singview Application Start Failure : {}".format(err))
 
         # get the Dialogue Handler
         dlg = app.window(title_re='Singleview Convergent Billing.*')
@@ -79,17 +83,13 @@ class WindowClass(wx.Frame):
         dlg.Ok.click()
 
 
-def main(sv_env):
+def show_msg_box(msg):
+    wx.MessageBox(msg, 'ERROR:', wx.OK | wx.ICON_ERROR)
+
+
+def main():
 
     app = wx.App()
-    WindowClass(sv_env, None)
-    app.MainLoop()
-
-"""
-Main program starts here
-"""
-
-if __name__ == '__main__':
     try:
         (env_list, sv_app) = get_login_data()
 
@@ -100,4 +100,13 @@ if __name__ == '__main__':
 
     except IOError as err:
         print("OS error: {0}".format(err))
-    main(env_dict)
+        show_msg_box("OS error: {0}".format(err))
+    WindowClass(env_dict, sv_app, None)
+    app.MainLoop()
+
+"""
+Main program starts here
+"""
+
+if __name__ == '__main__':
+    main()
